@@ -1,9 +1,7 @@
 package GreenHouse;
 
 import java.util.*;
-
 import GreenHouse.Events.Event;
-
 public class Controller {
 
   private int defaultPriority = 10;
