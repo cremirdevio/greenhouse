@@ -4,8 +4,8 @@
 
 //   private Controller gc = new Controller();
 
-//   public Restart(long starttime, long delayTime, Event[] eventList) {
-//     super(starttime, delayTime);
+//   public Restart(long delay, Event[] eventList) {
+//     super(delay);
 //     for (Event e : eventList) {
 //       gc.addEvent(e);
 //     }

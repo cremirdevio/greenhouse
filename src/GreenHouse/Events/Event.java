@@ -1,33 +1,71 @@
 package GreenHouse.Events;
 
-public abstract class Event implements Comparable<Event> {
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import GreenHouse.EventStatus;
+
+public abstract class Event implements Runnable  {
   private long duration;
   protected final long delay;
   private int priority;
+  private long startTime;
+  private EventStatus status = EventStatus.IDLE;
 
-  public Event(long starttime, long delay) {
-    this.duration = starttime;
+  private ScheduledExecutorService scheduler
+            = Executors.newScheduledThreadPool(1);
+
+  public Event(long delay) {
     this.delay = delay;
   }
 
   public void start() {
-    duration = System.nanoTime() + delay;
+    this.setStatus(EventStatus.RUNNING);
+    this.startTime = System.nanoTime();
+    
+    scheduler.scheduleAtFixedRate(this, this.delay, this.duration, TimeUnit.MILLISECONDS);
   }
 
-  public boolean ready() {
-    return System.nanoTime() >= duration;
+  public void stop() {
+    this.setStatus(EventStatus.STOPPED);
+
+    System.out.printf("Event completed: [%d]", System.nanoTime() + delay);
+
+    scheduler.shutdownNow();
+  }
+
+  public long getStartTime() {
+    return this.startTime;
+  }
+
+  public ScheduledExecutorService getSheduler() {
+    return this.scheduler;
   }
 
   public void setPriority(int priority) {
     this.priority = priority;
   }
 
+  public long getDuration() {
+    return this.duration;
+  }
+
+  public void setDuration(long duration) {
+    this.duration = duration;
+  }
+
   public int getPriority() {
     return priority;
   }
 
-  public abstract void switchOn();
-  public abstract void switchOff();
+  public EventStatus getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(EventStatus _status) {
+    this.status = _status;
+  }
 
   public int compareTo(Event event) {
     if (priority == event.priority)

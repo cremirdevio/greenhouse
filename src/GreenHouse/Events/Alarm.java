@@ -1,16 +1,12 @@
 package GreenHouse.Events;
 
 public class Alarm extends Event {
-  public Alarm(long starttime, long delayTime) {
-    super(starttime, delayTime);
+
+  public Alarm(long delay) {
+    super(delay);
   }
 
-  public void switchOn() {
-    System.out.println("Alarm is On");
+  public void run() {
+    System.out.println("Alarm is running");
   }
-
-  public void switchOff() {
-    System.out.println("Alarm is Off");
-  }
-
 }
