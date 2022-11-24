@@ -22,7 +22,7 @@ public abstract class Event implements Runnable  {
 
   public void start() {
     this.setStatus(EventStatus.RUNNING);
-    this.startTime = System.nanoTime();
+    this.startTime = System.nanoTime() / 1000000;
     
     scheduler.scheduleAtFixedRate(this, this.delay, this.duration, TimeUnit.MILLISECONDS);
   }

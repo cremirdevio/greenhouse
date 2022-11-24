@@ -7,13 +7,12 @@ public class Light extends Event {
   }
 
   public void run() {
-    System.out.printf(
-      "Checking if %l + %l >= %l",
-      this.getStartTime(),
-      this.getDuration(),
-      System.nanoTime()
-    );
-    if (this.getStartTime() + this.getDuration() >= System.nanoTime()) {
+    System.out.println("Light is On Now");
+    // System.out.println("Additon of time: " + (this.getStartTime() + this.getDuration()) );
+    // System.out.println("Current Time of time: " +  System.nanoTime() / 1_000_000 );
+
+
+    if ( (this.getStartTime() + this.getDuration()) <= System.nanoTime() / 1_000_000) {
       System.out.println("Light will now go off.");
       this.getSheduler().shutdown();
     } else System.out.println("Light is On Now");
