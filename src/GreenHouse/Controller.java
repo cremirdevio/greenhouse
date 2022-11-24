@@ -53,6 +53,12 @@ public class Controller {
         e.start();
       }
     // }
+
+    // CREATE a function that checks the status of each event every second.
+    // IF Thermostat is failed, stop all other events
+    // Then restart the constroller again
+
+    // ANOTHER function that runs periodic actions (Disruption Actions)
   }
 
   public void parsePlan(String filePath) throws FileNotFoundException {

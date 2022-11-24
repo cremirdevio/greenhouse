@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import GreenHouse.EventStatus;
+import GreenHouse.EventStopStatus;
 
 public abstract class Event implements Runnable  {
   private long duration;
@@ -27,8 +28,10 @@ public abstract class Event implements Runnable  {
     scheduler.scheduleAtFixedRate(this, this.delay, this.duration, TimeUnit.MILLISECONDS);
   }
 
-  public void stop() {
-    this.setStatus(EventStatus.STOPPED);
+  // Stop should get a reason, FAILED or NORMAL
+  public void stop(EventStopStatus reason) {
+    if (reason == EventStopStatus.GRACEFUL) this.setStatus(EventStatus.STOPPED);
+    else this.setStatus(EventStatus.FAILED);
 
     System.out.printf("Event completed: [%d]", System.nanoTime() + delay);
 
