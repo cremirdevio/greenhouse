@@ -9,14 +9,6 @@ import java.util.concurrent.TimeUnit;
 public class GreenHouse {
 
   public static void main(String[] args) {
-    System.out.println("Green House Initiated");
-
-    Bell evens = new Bell(1000);
-    EventType type = EventType.BELL;
-
-    System.out.println(type.toString());
-    System.out.println(evens.getClass().toString().toLowerCase().contains(type.toString().toLowerCase()));
-    System.exit(0);
 
     Controller greenHouseController = new Controller();
     ScheduledExecutorService controllerScheduler
@@ -32,10 +24,19 @@ public class GreenHouse {
     Runnable runner = new Runnable() {
       @Override
       public void run() {
+        System.out.println("Inspecting the Greenhouse...");
         boolean thermostatFailed = greenHouseController.check();
         if (thermostatFailed) {
           // Stop Fan if On
           greenHouseController.updateEvent(EventType.FAN, EventStatus.STOPPED);
+          Event alarm = greenHouseController.findEvent(EventType.ALARM);
+          if (alarm == null) {
+            greenHouseController.setUpEvent(EventType.ALARM, 0);
+            alarm = greenHouseController.findEvent(EventType.ALARM);
+
+            alarm.setDuration(5000);
+            alarm.start();
+          }
         } else {
           // Check if fan should be on
           // If yes, put it on
