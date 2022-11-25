@@ -1,5 +1,6 @@
 package GreenHouse;
 
+import GreenHouse.Events.Alarm;
 import GreenHouse.Events.Bell;
 import GreenHouse.Events.Event;
 import GreenHouse.Events.Fan;
@@ -122,7 +123,8 @@ public class Controller {
   }
 
   // Parse the event plan from the text file
-  public void parsePlan(String filePath) throws FileNotFoundException {
+  public void parsePlan(String filePath)
+    throws FileNotFoundException, ArrayIndexOutOfBoundsException {
     Scanner s = new Scanner(new BufferedReader(new FileReader(filePath)));
 
     ArrayList<String> list = new ArrayList<String>();
@@ -247,6 +249,10 @@ public class Controller {
         Fan fan = new Fan(delay);
         eventList.add(fan);
         break;
+      case ALARM:
+        Alarm alarm = new Alarm(delay);
+        eventList.add(alarm);
+        break;
       default:
         break;
     }
@@ -280,6 +286,10 @@ public class Controller {
         Fan fan = new Fan(delay);
         fan.setDuration(duration);
         eventList.add(fan);
+      case ALARM:
+        Alarm alarm = new Alarm(delay);
+        alarm.setDuration(duration);
+        eventList.add(alarm);
       default:
         break;
     }
