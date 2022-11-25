@@ -27,15 +27,18 @@ public class Controller {
 
   private ArrayList flaggedEvents = new ArrayList<EventType>();
 
+  // Add an event to the controller
   public void addEvent(Event c) {
     c.setPriority(defaultPriority);
     eventList.add(c);
   }
 
+  // Set the default priority of the controller
   public void setDefalutPriority(int priority) {
     this.defaultPriority = priority;
   }
 
+  // Start all events
   public void run() {
     if (this.controllerStatus == EventStatus.IDLE) {
       System.out.println("Controller start each event.");
@@ -49,6 +52,60 @@ public class Controller {
     }
   }
 
+  // Checking if thermostart failed
+  public boolean check() {
+    for (Event event : new ArrayList<Event>(eventList)) {
+      if (
+        event
+          .getClass()
+          .toString()
+          .toLowerCase()
+          .contains(EventType.THERMOSTAT.toString().toLowerCase())
+      ) {
+        return event.getStatus() == EventStatus.FAILED;
+      }
+    }
+
+    return false;
+  }
+
+  // Update the status of an event when you don't want to stop the event
+  public void updateEvent(EventType eventType, EventStatus status) {
+    Event event = this.findEvent(eventType);
+
+    if (event != null) {
+      if (
+        status == EventStatus.FAILED && event.getStatus() == EventStatus.RUNNING
+      ) {
+        event.stop(EventStopStatus.FAILED);
+      } else if (
+        status == EventStatus.STOPPED &&
+        event.getStatus() == EventStatus.RUNNING
+      ) {
+        event.stop(EventStopStatus.GRACEFUL);
+      } else {
+        event.setStatus(status);
+      }
+    }
+  }
+
+  // Search for a specific event
+  public Event findEvent(EventType eventType) {
+    for (Event event : new ArrayList<Event>(eventList)) {
+      if (
+        event
+          .getClass()
+          .toString()
+          .toLowerCase()
+          .contains(eventType.toString().toLowerCase())
+      ) {
+        return event;
+      }
+    }
+    return null;
+  }
+
+  // Parse the event plan from the text file
   public void parsePlan(String filePath) throws FileNotFoundException {
     Scanner s = new Scanner(new BufferedReader(new FileReader(filePath)));
 
@@ -80,6 +137,7 @@ public class Controller {
     System.out.println(">>> Operation plan has been successfully extracted.");
   }
 
+  // Parse the command gotten from the text file
   public void parseCommand(String type, String cmd) {
     String delimiter = "[=,]";
     String[] activity = cmd.split(delimiter);
@@ -116,6 +174,7 @@ public class Controller {
     }
   }
 
+  // Get the type of the event
   public EventType getEventType(String evt) {
     switch (evt.toLowerCase()) {
       case "*":
@@ -135,6 +194,7 @@ public class Controller {
     }
   }
 
+  // Set the individual priority of an event
   public void setEventPriority(EventType evt, int value) {
     // if its * set the default priority
     // else create the event and set its priority
@@ -149,6 +209,7 @@ public class Controller {
     }
   }
 
+  // Instantiate an event
   public void setUpEvent(EventType evt, long delay) {
     switch (evt) {
       case LIGHT:
@@ -172,6 +233,7 @@ public class Controller {
     }
   }
 
+  // Instantiate an event (Method overload)
   public void setUpEvent(EventType evt, long delay, int duration) {
     switch (evt) {
       case LIGHT:
@@ -200,6 +262,7 @@ public class Controller {
     }
   }
 
+  // Capitalize: the first letter of a string
   public String capitalize(String word) {
     String firstLetter = word.substring(0, 1);
     String remainingLetters = word.substring(1, word.length());
