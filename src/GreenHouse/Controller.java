@@ -13,6 +13,7 @@ import java.util.*;
 public class Controller {
 
   private int defaultPriority = 10;
+  private EventStatus controllerStatus = EventStatus.IDLE;
 
   private Queue<Event> eventList = new PriorityQueue<>(
     new Comparator<Event>() {
@@ -36,29 +37,16 @@ public class Controller {
   }
 
   public void run() {
-    System.out.println("SIze of event list: " + eventList.size());
-    // while (eventList.size() > 0) {
-      // Here we can implement fails mechanism as well.. Incase action action return
-      // some error we can call restart event..
-      // Fails mechanism can be on different types but based on whats given in problem
-      // statement we can have that..
-      for (Event e : new ArrayList<Event>(eventList)) {
-        // Perform a try catch here
-        // e.start();
-        // In the catch part, stop the event and remove it from the list or flag it
-        // eventList.remove(e);
-
-        System.out.println(e.getClass() + "");
-
-        e.start();
+    if (this.controllerStatus == EventStatus.IDLE) {
+      System.out.println("Controller start each event.");
+      for (Event event : new ArrayList<Event>(eventList)) {
+        try {
+          event.start();
+        } catch (Exception e) {
+          eventList.remove(event);
+        }
       }
-    // }
-
-    // CREATE a function that checks the status of each event every second.
-    // IF Thermostat is failed, stop all other events
-    // Then restart the constroller again
-
-    // ANOTHER function that runs periodic actions (Disruption Actions)
+    }
   }
 
   public void parsePlan(String filePath) throws FileNotFoundException {
