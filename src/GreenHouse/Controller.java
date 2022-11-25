@@ -15,6 +15,7 @@ public class Controller {
 
   private int defaultPriority = 10;
   private EventStatus controllerStatus = EventStatus.IDLE;
+  private long startTime = 0;
 
   private Queue<Event> eventList = new PriorityQueue<>(
     new Comparator<Event>() {
@@ -26,7 +27,7 @@ public class Controller {
     }
   );
 
-  private ArrayList flaggedEvents = new ArrayList<EventType>();
+  private HashMap<Integer, EventType> commands = new HashMap<>();
 
   // Add an event to the controller
   public void addEvent(Event c) {
@@ -41,6 +42,8 @@ public class Controller {
 
   // Start all events
   public void run() {
+    this.startTime = System.nanoTime() / 1_000_000;
+
     if (this.controllerStatus == EventStatus.IDLE) {
       System.out.println("Controller start each event.");
       for (Event event : new ArrayList<Event>(eventList)) {
@@ -55,6 +58,18 @@ public class Controller {
 
   // Checking if thermostart failed
   public boolean check() {
+    // Get current seconds spent
+    int timeSpent =
+      ((int) ((System.nanoTime() / 1_000_000) - this.startTime) / 1_000) *
+      1_000;
+    System.out.println("Time Spent is  " + timeSpent / 1_000);
+
+    // Check commands
+    EventType eventToFail = this.commands.get(timeSpent);
+    if (eventToFail != null) {
+      this.updateEvent(eventToFail, EventStatus.FAILED);
+    }
+
     for (Event event : new ArrayList<Event>(eventList)) {
       if (
         event
@@ -167,8 +182,7 @@ public class Controller {
         this.setUpEvent(eventType, firstParameter, 1000);
         break;
       case "failed":
-        // this event should be flagged as fail event
-        // this.setUpEvent(eventType, firstParameter, secondParameter);
+        this.commands.put((int) firstParameter, eventType);
         break;
       default:
         break;

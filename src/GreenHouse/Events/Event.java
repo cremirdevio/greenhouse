@@ -31,10 +31,16 @@ public abstract class Event implements Runnable  {
 
   // Stop should get a reason, FAILED or NORMAL
   public void stop(EventStopStatus reason) {
-    if (reason == EventStopStatus.GRACEFUL) this.setStatus(EventStatus.STOPPED);
-    else this.setStatus(EventStatus.FAILED);
+    String action = "completed ✅";
 
-    System.out.printf("%s completed: [%d] \n\n", this.getEventName(), (System.nanoTime()/1_000_000) + delay);
+    if (reason == EventStopStatus.GRACEFUL) {
+      this.setStatus(EventStatus.STOPPED);
+    } else{
+      action = "failed ❌";
+      this.setStatus(EventStatus.FAILED);
+    }
+
+    System.out.printf("%s %s: [%d] \n\n", this.getEventName(), action, (System.nanoTime()/1_000_000) + delay);
 
     scheduler.shutdownNow();
   }
