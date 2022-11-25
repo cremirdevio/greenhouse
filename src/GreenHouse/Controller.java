@@ -2,6 +2,7 @@ package GreenHouse;
 
 import GreenHouse.Events.Bell;
 import GreenHouse.Events.Event;
+import GreenHouse.Events.Fan;
 import GreenHouse.Events.Light;
 import GreenHouse.Events.Thermostat;
 import GreenHouse.Events.Water;
@@ -163,7 +164,7 @@ public class Controller {
         this.setUpEvent(eventType, firstParameter, secondParameter);
         break;
       case "test":
-        // this.setUpEvent(eventType, firstParameter, 0);
+        this.setUpEvent(eventType, firstParameter, 1000);
         break;
       case "failed":
         // this event should be flagged as fail event
@@ -228,6 +229,10 @@ public class Controller {
         Water water = new Water(delay);
         eventList.add(water);
         break;
+      case FAN:
+        Fan fan = new Fan(delay);
+        eventList.add(fan);
+        break;
       default:
         break;
     }
@@ -257,6 +262,10 @@ public class Controller {
         water.setDuration(duration);
         eventList.add(water);
         break;
+      case FAN:
+        Fan fan = new Fan(delay);
+        fan.setDuration(duration);
+        eventList.add(fan);
       default:
         break;
     }
