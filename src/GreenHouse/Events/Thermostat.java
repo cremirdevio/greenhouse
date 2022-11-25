@@ -8,7 +8,7 @@ public class Thermostat extends Event {
 
   public void run() {
     if ( this.canGoNextCycle()) {
-      System.out.println("Thermostat is Running");
+      System.out.println("🌡 Thermostat is Running");
     }
   }
 }

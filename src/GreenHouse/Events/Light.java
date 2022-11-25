@@ -8,7 +8,7 @@ public class Light extends Event {
 
   public void run() {
     if (this.canGoNextCycle()) {
-      System.out.println("Light is On");
+      System.out.println("🔆 Light is On");
     }
   }
 }

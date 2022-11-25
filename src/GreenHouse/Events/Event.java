@@ -34,7 +34,7 @@ public abstract class Event implements Runnable  {
     if (reason == EventStopStatus.GRACEFUL) this.setStatus(EventStatus.STOPPED);
     else this.setStatus(EventStatus.FAILED);
 
-    System.out.printf("Event completed: [%d]", System.nanoTime() + delay);
+    System.out.printf("%s completed: [%d] \n\n", this.getEventName(), (System.nanoTime()/1_000_000) + delay);
 
     scheduler.shutdownNow();
   }
@@ -49,10 +49,17 @@ public abstract class Event implements Runnable  {
 
     // Check if its been stopped already
     if (this.status == EventStatus.RUNNING) {
-      this.scheduler.shutdownNow();
+      this.stop(EventStopStatus.GRACEFUL);
     }
 
     return false;
+  }
+
+  public String getEventName() {
+    String className = this.getClass().toString();
+    String[] details = className.split("[.]");
+
+    return details[details.length - 1];
   }
 
   public long getStartTime() {

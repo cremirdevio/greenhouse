@@ -8,7 +8,7 @@ public class Water extends Event {
 
   public void run() {
     if (this.canGoNextCycle()) {
-      System.out.println("Water is Running");
+      System.out.println("💦🚰 Water is Running");
     }
   }
 
