@@ -7,6 +7,6 @@ public class Bell extends Event {
   }
 
   public void run() {
-    System.out.println("Bell is Ringing");
+    if (this.canGoNextCycle()) System.out.println("Bell is Ringing");
   }
 }

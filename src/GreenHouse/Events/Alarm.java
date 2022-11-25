@@ -7,6 +7,8 @@ public class Alarm extends Event {
   }
 
   public void run() {
-    System.out.println("Alarm is running");
+    if (this.canGoNextCycle()) {
+      System.out.println("Alarm is running");
+    }
   }
 }

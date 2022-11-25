@@ -8,6 +8,7 @@ import GreenHouse.EventStatus;
 import GreenHouse.EventStopStatus;
 
 public abstract class Event implements Runnable  {
+  final private long TIME_ALLOWANCE = 1000; // -+1000 ms allowance
   private long duration;
   protected final long delay;
   private int priority;
@@ -23,9 +24,9 @@ public abstract class Event implements Runnable  {
 
   public void start() {
     this.setStatus(EventStatus.RUNNING);
-    this.startTime = System.nanoTime() / 1000000;
+    this.startTime = System.nanoTime() / 1_000_000; // in milliseconds
     
-    scheduler.scheduleAtFixedRate(this, this.delay, this.duration, TimeUnit.MILLISECONDS);
+    scheduler.scheduleAtFixedRate(this, this.delay, 1000, TimeUnit.MILLISECONDS);
   }
 
   // Stop should get a reason, FAILED or NORMAL
@@ -36,6 +37,22 @@ public abstract class Event implements Runnable  {
     System.out.printf("Event completed: [%d]", System.nanoTime() + delay);
 
     scheduler.shutdownNow();
+  }
+
+  public boolean canGoNextCycle() {
+    long endTime = this.startTime + this.duration + this.TIME_ALLOWANCE;
+    long currentTime = System.nanoTime() / 1_000_000;
+
+    if ((currentTime <= endTime)) {
+      return true;
+    }
+
+    // Check if its been stopped already
+    if (this.status == EventStatus.RUNNING) {
+      this.scheduler.shutdownNow();
+    }
+
+    return false;
   }
 
   public long getStartTime() {
