@@ -1,5 +1,7 @@
+
 package GreenHouse;
 
+/** Greenhouse Event packages */
 import GreenHouse.Events.Alarm;
 import GreenHouse.Events.Bell;
 import GreenHouse.Events.Event;
@@ -7,17 +9,24 @@ import GreenHouse.Events.Fan;
 import GreenHouse.Events.Light;
 import GreenHouse.Events.Thermostat;
 import GreenHouse.Events.Water;
+
+/** Java core packages */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
+/** primary (public) class for Controller */
 public class Controller {
 
+  /** This integer variable holds the value to the default priority to apply to all Events  */
   private int defaultPriority = 10;
+  /** EventStatus (enum) variable holds the current status of the Event */
   private EventStatus controllerStatus = EventStatus.IDLE;
+  /** Integer variable to store the start time of an event. */
   private long startTime = 0;
 
+  /** A PriorityQueue to store the list of events in order to their priority value. */
   private Queue<Event> eventList = new PriorityQueue<>(
     new Comparator<Event>() {
       public int compare(Event e1, Event e2) {
@@ -28,20 +37,21 @@ public class Controller {
     }
   );
 
+  /** An HashMap to store a mapping of the time(int [milliseconds]) to the event modification actions that should happen at the specified time. */
   private HashMap<Integer, EventType> commands = new HashMap<>();
 
-  // Add an event to the controller
+  /** This method is used to add an event to the Priority Queue */
   public void addEvent(Event c) {
     c.setPriority(defaultPriority);
     eventList.add(c);
   }
 
-  // Set the default priority of the controller
+  /** This method sets the default priority of the controller */
   public void setDefalutPriority(int priority) {
     this.defaultPriority = priority;
   }
 
-  // Start all events
+  /** This method Start all events */
   public void run() {
     this.startTime = System.nanoTime() / 1_000_000;
 
@@ -57,7 +67,7 @@ public class Controller {
     }
   }
 
-  // Checking if thermostart failed
+  /** A method that checks if thermostart failed */
   public boolean check() {
     // Get current seconds spent
     int timeSpent =
@@ -86,7 +96,7 @@ public class Controller {
     return false;
   }
 
-  // Update the status of an event when you don't want to stop the event
+  /** Update the status of an event when you don't want to stop the event */
   public void updateEvent(EventType eventType, EventStatus status) {
     Event event = this.findEvent(eventType);
 
@@ -106,7 +116,7 @@ public class Controller {
     }
   }
 
-  // Search for a specific event
+  /** Search for a specific event */
   public Event findEvent(EventType eventType) {
     for (Event event : new ArrayList<Event>(eventList)) {
       if (
@@ -122,7 +132,7 @@ public class Controller {
     return null;
   }
 
-  // Parse the event plan from the text file
+  /** Parse the event plan from the text file */
   public void parsePlan(String filePath)
     throws FileNotFoundException, ArrayIndexOutOfBoundsException {
     Scanner s = new Scanner(new BufferedReader(new FileReader(filePath)));
@@ -155,7 +165,7 @@ public class Controller {
     System.out.println(">>> Operation plan has been successfully extracted.");
   }
 
-  // Parse the command gotten from the text file
+  /** Parse the command gotten from the text file*/
   public void parseCommand(String type, String cmd) {
     String delimiter = "[=,]";
     String[] activity = cmd.split(delimiter);
@@ -191,7 +201,7 @@ public class Controller {
     }
   }
 
-  // Get the type of the event
+  /** Get the type of the event */
   public EventType getEventType(String evt) {
     switch (evt.toLowerCase()) {
       case "*":
@@ -211,7 +221,7 @@ public class Controller {
     }
   }
 
-  // Set the individual priority of an event
+  /** Set the individual priority of an event */
   public void setEventPriority(EventType evt, int value) {
     // if its * set the default priority
     // else create the event and set its priority
@@ -226,7 +236,7 @@ public class Controller {
     }
   }
 
-  // Instantiate an event
+  /** Instantiate an event */
   public void setUpEvent(EventType evt, long delay) {
     switch (evt) {
       case LIGHT:
@@ -258,7 +268,7 @@ public class Controller {
     }
   }
 
-  // Instantiate an event (Method overload)
+  /** Instantiate an event (Method overload) */
   public void setUpEvent(EventType evt, long delay, int duration) {
     switch (evt) {
       case LIGHT:
@@ -295,7 +305,7 @@ public class Controller {
     }
   }
 
-  // Capitalize: the first letter of a string
+  /** Capitalize: the first letter of a string */
   public String capitalize(String word) {
     String firstLetter = word.substring(0, 1);
     String remainingLetters = word.substring(1, word.length());
